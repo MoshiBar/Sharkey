@@ -81,7 +81,7 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 		newReactions.push([props.note.myReaction, newSource[props.note.myReaction]]);
 	}
 
-	reactions = newReactions;
+	reactions.value = newReactions;
 
 	let emojisToConvert = [];
 	let emojisToConvertLocal = [];
@@ -100,7 +100,7 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 	emojisToConvertLocal.forEach(name => {
 		let count = 0;
 		reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
-		reactions = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+		reactions.value = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
 		reactions.find(e => e[0] === `:${name}@.:`)[1] = count;
 	});
 	await emojisToConvert.forEach(async name => {
@@ -112,7 +112,7 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 			//copypaste of above code, TODO: deduplicate code
 			let count = 0;
 			reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
-			reactions = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+			reactions.value = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
 			reactions.find(e => e[0] === `:${name}@.:`)[1] = count;
 		}).catch(() => {});
 	});
