@@ -29,7 +29,6 @@ import * as Misskey from 'misskey-js';
 import { ref } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n.js';
-import { $i } from '@/account.js';
 import * as os from '@/os.js';
 
 const props = defineProps<{
@@ -60,8 +59,8 @@ async function follow() {
 	top: 30px;
 	left: 13px;
 	z-index: 2;
-	width: 58px;
-	height: 58px;
+	width: var(--avatar);
+	height: var(--avatar);
 	border: solid 4px var(--panel);
 }
 
