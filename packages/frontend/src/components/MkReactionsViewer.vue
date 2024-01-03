@@ -85,8 +85,8 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 
 	let emojisToConvert = [];
 	let emojisToConvertLocal = [];
-	for(let i = 0; i < reactions.length; i++){
-		let name = reactions[i][0];
+	for(let i = 0; i < reactions.value.length; i++){
+		let name: string = reactions.value[i][0];
 		if(name.startsWith(':')){
 			let strippedName = name.replace(/^:(\w+)(@.*)?:$/, '$1');
 			if(name.endsWith('@.:')){
@@ -99,21 +99,21 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 	}
 	emojisToConvertLocal.forEach(name => {
 		let count = 0;
-		reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
-		reactions.value = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
-		reactions.find(e => e[0] === `:${name}@.:`)[1] = count;
+		reactions.value.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
+		reactions.value = reactions.value.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+		reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
 	});
 	await emojisToConvert.forEach(async name => {
 		await os.api('emoji', {
 			name: name
 		}).then(emoji => {
-			reactions.find(e => e[0].includes(`:${name}@`))[0] = `:${name}@.:`
+			reactions.value.find(e => e[0].includes(`:${name}@`))[0] = `:${name}@.:`
 
 			//copypaste of above code, TODO: deduplicate code
 			let count = 0;
-			reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
-			reactions.value = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
-			reactions.find(e => e[0] === `:${name}@.:`)[1] = count;
+			reactions.value.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
+			reactions.value = reactions.value.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+			reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
 		}).catch(() => {});
 	});
 
