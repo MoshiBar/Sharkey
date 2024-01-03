@@ -23,6 +23,7 @@ import { inject, watch, ref } from 'vue';
 import XReaction from '@/components/MkReactionsViewer.reaction.vue';
 import { defaultStore } from '@/store.js';
 import * as os from '@/os.js';
+import { customEmojis, customEmojisMap } from '@/custom-emojis.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -55,7 +56,7 @@ function onMockToggleReaction(emoji: string, count: number) {
 	emit('mockUpdateMyReaction', emoji, (count - reactions.value[i][1]));
 }
 
-watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, maxNumber]) => {
+watch([() => props.note.reactions, () => props.maxNumber], /*async*/ ([newSource, maxNumber]) => {
 	let newReactions: [string, number][] = [];
 	hasMoreReactions.value = Object.keys(newSource).length > maxNumber;
 
@@ -103,18 +104,23 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 		reactions.value = reactions.value.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
 		reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
 	});
-	await emojisToConvert.forEach(async name => {
-		await os.api('emoji', {
+	/*await*/ emojisToConvert.forEach(/*async*/ name => {
+		const exactMatch = customEmojis.value.find(emoji => emoji.name === name);
+		if (exactMatch) {
+			let count = 0;
+			reactions.value.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
+			reactions.value = reactions.value.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+			reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
+		}
+
+		/*await os.api('emoji', {
 			name: name
 		}).then(emoji => {
 			reactions.value.find(e => e[0].includes(`:${name}@`))[0] = `:${name}@.:`
 
 			//copypaste of above code, TODO: deduplicate code
-			let count = 0;
-			reactions.value.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
-			reactions.value = reactions.value.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
-			reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
-		}).catch(() => {});
+
+		}).catch(() => {});*/
 	});
 
 
