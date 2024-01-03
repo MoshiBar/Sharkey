@@ -56,7 +56,7 @@ function onMockToggleReaction(emoji: string, count: number) {
 	emit('mockUpdateMyReaction', emoji, (count - reactions.value[i][1]));
 }
 
-watch([() => props.note.reactions, () => props.maxNumber], /*async*/ ([newSource, maxNumber]) => {
+watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumber]) => {
 	let newReactions: [string, number][] = [];
 	hasMoreReactions.value = Object.keys(newSource).length > maxNumber;
 
@@ -104,7 +104,7 @@ watch([() => props.note.reactions, () => props.maxNumber], /*async*/ ([newSource
 		reactions.value = reactions.value.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
 		reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
 	});
-	/*await*/ emojisToConvert.forEach(/*async*/ name => {
+	emojisToConvert.forEach(name => {
 		const exactMatch = customEmojis.value.find(emoji => emoji.name === name);
 		if (exactMatch) {
 			let count = 0;
@@ -113,19 +113,7 @@ watch([() => props.note.reactions, () => props.maxNumber], /*async*/ ([newSource
 			reactions.value.find(e => e[0] === `:${name}@.:`)[1] = count;
 		}
 
-		/*await os.api('emoji', {
-			name: name
-		}).then(emoji => {
-			reactions.value.find(e => e[0].includes(`:${name}@`))[0] = `:${name}@.:`
-
-			//copypaste of above code, TODO: deduplicate code
-
-		}).catch(() => {});*/
 	});
-
-
-	//console.log(Object.keys(reactions));
-	//console.log(Object.values(reactions));
 
 }, { immediate: true, deep: true });
 </script>
